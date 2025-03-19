@@ -15,28 +15,32 @@ def main():
     # Function to handle piece clicks
     def on_piece_click(row, column):
         global selected_piece
-        square = chess.square(column, 7 - row)  # Convert row/column to chess square
+
+    # Convert row, column to a chess square
+        square = chess.square(column, 7 - row)
         piece = board_chess.piece_at(square)
-        print(f"Piece clicked at ({row},{column})")
-        
-        if selected_piece is None:
-            # Select the piece if it's the player's turn and the piece belongs to the player
-            if piece is not None and piece.color == board_chess.turn:
-                selected_piece = square
-                print(f"Selected piece at: {chess.square_name(selected_piece)}")
-        else:
-            # Attempt to move the selected piece to the clicked square
-            move = chess.Move(selected_piece, square)
-            if move in board_chess.legal_moves:
-                # Make the player's move
-                board_chess.push(move)
-                print(f"Player moved: {move.uci()}")
-                update_board()
+
+    # Check if a piece exists and belongs to the user (white)
+        if piece and piece.color == chess.WHITE:
+            selected_piece = square  # Store the selected piece's position
+            show_legal_moves(square)
+    
+    def show_legal_moves(square):
+        for move in board_chess.legal_moves:
+            if move.from_square == square:
+                target_row = 7 - chess.square_rank(move.to_square)
+                target_col = chess.square_file(move.to_square)
+                square_button(target_row, target_col)
                 
-                # Check for game over
-                if board_chess.is_game_over():
-                    print("Game over!")
-                    return
+                
+    def square_button(row, column):
+        color_of_button = "#A9CBA7" if (row + column) % 2 == 0 else "#4B6A4F"
+        moving_button = customtkinter.CTkButton(board_frame , text="●" , width=5 , height=5 , fg_color=color_of_button , bg_color=color_of_button , text_color="white")
+        moving_button.grid(row = row , column = column)
+    
+
+                
+                
                 
 
     # Function to update the board GUI
